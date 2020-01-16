@@ -1,0 +1,13 @@
+.DS_Store
+.atom/
+.pub/
+build/
+ios/.generated/
+.packages
+.dart_tool/
+pubspec.lock
+*.iml
+*.ipr
+*.iws
+.idea/
+doc/api/
