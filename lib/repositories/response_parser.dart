@@ -1,6 +1,6 @@
 import 'dart:convert' as json;
 
-import 'package:flutter_app/src/schoolClass.dart';
+import 'package:bjs/models/schoolClass.dart';
 
 List<SchoolClass> parseSchoolClasses(String jsonString) {
   var root = json.jsonDecode(jsonString) as Map;

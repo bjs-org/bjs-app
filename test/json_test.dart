@@ -1,5 +1,5 @@
-import 'package:flutter_app/src/json_parsing.dart';
-import 'package:flutter_app/src/schoolClass.dart';
+import 'package:bjs/repositories/response_parser.dart';
+import 'package:bjs/models/schoolClass.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
