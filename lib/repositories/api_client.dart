@@ -1,3 +1,5 @@
+import 'package:bjs/models/models.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -31,6 +33,17 @@ class BjsApiClient {
     }
 
     return parseSchoolClasses(response.body);
+  }
+
+  Future<List<Student>> fetchStudentsForClass(String classUrl) async {
+    final locationUrl = "$baseUrl/students/search/findAllBySchoolClass?schoolClass=$classUrl";
+    final response = await this.client.get(locationUrl, headers: _headers());
+
+    if (response.statusCode != 200) {
+      throw Exception("Coult not fetch students");
+    }
+
+    return parseStudents(response.body);
   }
 
 }

@@ -4,7 +4,7 @@ class Student {
   bool female;
   DateTime birthDay;
 
-  Student(this.firstName, this.lastName, this.female, this.birthDay);
+  Student({this.firstName, this.lastName, this.female, this.birthDay});
 
   int compareTo(Student b) {
     var lastNameCompared = lastName.toLowerCase().compareTo(b.lastName.toLowerCase());
@@ -13,16 +13,13 @@ class Student {
     }
     return lastNameCompared;
   }
-}
 
-List<Student> students = [
-  Student("Liam","Heß",false,DateTime.utc(2002)),
-  Student("Liam","Heß",false,DateTime.utc(2002)),
-  Student("Liam","Heß",false,DateTime.utc(2002)),
-  Student("Liam","Heß",false,DateTime.utc(2002)),
-  Student("Liam","Heß",false,DateTime.utc(2002)),
-  Student("Liam","Heß",false,DateTime.utc(2002)),
-  Student("Liam","Heß",false,DateTime.utc(2002)),
-  Student("Liam","Heß",false,DateTime.utc(2002)),
-  Student("Liam","Heß",false,DateTime.utc(2002)),
-];
+  factory Student.fromJson(Map<String, dynamic> json) {
+    return Student(
+      firstName: json["firstName"],
+      lastName: json["lastName"],
+      female: json["female"] as bool,
+      birthDay: DateTime.parse(json["birthDay"])
+    );
+  }
+}

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:bjs/repositories/reposiories.dart';
+import 'package:bjs/repositories/repositories.dart';
 import 'package:bjs/models/models.dart';
 import 'package:bjs/blocs/blocs.dart';
 import 'package:bjs/widgets/widgets.dart';
@@ -49,16 +49,17 @@ class _BJSInterfaceState extends State<BJSInterface> {
 
   List<Widget> _widgetOptions = [
     ClassesPage(),
-    ClassPage(),
+    ClassPage(schoolClass: SchoolClass(
+        name: "A",
+        grade: "7",
+        teacherName: "Gutsche",
+        url: "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes/23")),
     Center(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Bundesjugenspiele"),
-        ),
         body: _widgetOptions.elementAt(_selectedIndex),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[

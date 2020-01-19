@@ -1,23 +1,48 @@
+import 'package:bjs/blocs/blocs.dart';
 import 'package:bjs/models/models.dart';
+import 'package:bjs/repositories/repositories.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 class ClassPage extends StatelessWidget {
+  final SchoolClass schoolClass;
+
+  ClassPage({@required this.schoolClass});
+
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      ClassInformation(
-        schoolClass: SchoolClass(name: "A", grade: "7", teacherName: "Gutsche"),
-      ),
-      Expanded(child: StudentListView(students: students))
-    ]);
+    final BjsApiClient apiClient = BjsApiClient(client: http.Client());
+
+    return CustomScrollView(
+      slivers: <Widget>[
+        ClassInformationSliverAppBar(
+          schoolClass: schoolClass,
+        ),
+        BlocProvider(
+          create: (context) => StudentBloc(apiClient: apiClient),
+          child: BlocBuilder<StudentBloc, StudentState>(
+            builder: (context, state) {
+                if (state is StudentsLoaded) {
+                  return(StudentSliverList(students: state.students,));
+                }
+                if (state is StudentsEmpty) {
+                  BlocProvider.of<StudentBloc>(context).add(FetchStudentsForClass(schoolClass: schoolClass));
+                }
+                return(SliverPadding(padding: EdgeInsets.all(8.0),));
+            },
+          ),
+        )
+      ],
+    );
   }
 }
 
-class StudentListView extends StatelessWidget {
+class StudentSliverList extends StatelessWidget {
   final List<Student> students;
 
-  StudentListView({@required this.students});
+  StudentSliverList({@required this.students});
 
   Widget _buildStudent(Student student) {
     return Card(
@@ -34,26 +59,33 @@ class StudentListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-        children: students.map((student) => _buildStudent(student)).toList());
+    return SliverList(
+        delegate: SliverChildListDelegate(
+            students.map((student) => _buildStudent(student)).toList()));
   }
 }
 
-class ClassInformation extends StatelessWidget {
+class ClassInformationSliverAppBar extends StatelessWidget {
   final SchoolClass schoolClass;
 
-  ClassInformation({@required this.schoolClass}) : assert(schoolClass != null);
+  ClassInformationSliverAppBar({@required this.schoolClass})
+      : assert(schoolClass != null);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          "${schoolClass.combinedName} - ${schoolClass.teacherName}",
-          style: TextStyle(fontSize: 36.0),
-        ),
+    return SliverAppBar(
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text(schoolClass.combinedName),
       ),
+      pinned: true,
+      primary: true,
+      expandedHeight: 150.0,
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.edit),
+          onPressed: () {},
+        )
+      ],
     );
   }
 }

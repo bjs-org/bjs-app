@@ -2,8 +2,9 @@ class SchoolClass {
   final String name;
   final String grade;
   final String teacherName;
+  final String url;
 
-  const SchoolClass({this.name, this.grade, this.teacherName});
+  const SchoolClass({this.name, this.grade, this.teacherName, this.url});
 
   factory SchoolClass.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -11,7 +12,9 @@ class SchoolClass {
     return SchoolClass(
         name: json["className"],
         grade: json["grade"],
-        teacherName: json["classTeacherName"]);
+        teacherName: json["classTeacherName"],
+        url: json["_links"]["self"]["href"]
+    );
   }
 
   String get combinedName => '$grade$name';
