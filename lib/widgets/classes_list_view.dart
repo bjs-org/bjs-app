@@ -1,5 +1,7 @@
 import 'package:bjs/models/schoolClass.dart';
+import 'package:bjs/blocs/blocs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ClassesListView extends StatelessWidget {
   final List<SchoolClass> classes;
@@ -8,7 +10,7 @@ class ClassesListView extends StatelessWidget {
     classes.sort((a, b) => a.compareTo(b));
   }
 
-  Widget _buildSchoolClass(SchoolClass schoolClass) {
+  Widget _buildSchoolClass(SchoolClass schoolClass, BuildContext context) {
     return Card(
       child: ListTile(
         title: Text(
@@ -17,7 +19,8 @@ class ClassesListView extends StatelessWidget {
         ),
         subtitle: Text(schoolClass.teacherName),
         onTap: () {
-          //TODO
+          BlocProvider.of<StudentsBloc>(context)
+              .add(FetchStudentsForClass(schoolClass: schoolClass));
         },
       ),
     );
@@ -25,9 +28,9 @@ class ClassesListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-        children: classes
-            .map((schoolClass) => _buildSchoolClass(schoolClass))
-            .toList());
+    return SliverList(
+        delegate: SliverChildListDelegate(classes
+            .map((schoolClass) => _buildSchoolClass(schoolClass, context))
+            .toList()));
   }
 }

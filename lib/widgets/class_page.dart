@@ -1,6 +1,7 @@
 import 'package:bjs/blocs/blocs.dart';
 import 'package:bjs/models/models.dart';
 import 'package:bjs/repositories/repositories.dart';
+import 'package:bjs/widgets/helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -13,26 +14,32 @@ class ClassPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final BjsApiClient apiClient = BjsApiClient(client: http.Client());
-
     return CustomScrollView(
       slivers: <Widget>[
         ClassInformationSliverAppBar(
           schoolClass: schoolClass,
         ),
-        BlocProvider(
-          create: (context) => StudentBloc(apiClient: apiClient),
-          child: BlocBuilder<StudentBloc, StudentState>(
-            builder: (context, state) {
-                if (state is StudentsLoaded) {
-                  return(StudentSliverList(students: state.students,));
-                }
-                if (state is StudentsEmpty) {
-                  BlocProvider.of<StudentBloc>(context).add(FetchStudentsForClass(schoolClass: schoolClass));
-                }
-                return(SliverPadding(padding: EdgeInsets.all(8.0),));
-            },
-          ),
+        BlocBuilder<StudentsBloc, StudentsState>(
+          builder: (context, state) {
+            if (state is StudentsLoaded) {
+              return (StudentSliverList(
+                students: state.students,
+              ));
+            }
+            if (state is StudentsLoading) {
+              return convertToSliver(Center(child: CircularProgressIndicator(),));
+            }
+            if (state is StudentsEmpty) {
+              return convertToSliver(Text("Nothing here"));
+            }
+            if (state is StudentsError) {
+              return convertToSliver(Text("Something went wrong"));
+            }
+
+            return (SliverPadding(
+              padding: EdgeInsets.all(8.0),
+            ));
+          },
         )
       ],
     );

@@ -11,7 +11,6 @@ import 'package:bjs/widgets/widgets.dart';
 
 void main() {
   BlocSupervisor.delegate = SimpleBlocDelegate();
-
   final BjsApiClient apiClient = BjsApiClient(client: http.Client());
 
   runApp(MyApp(apiClient: apiClient));
@@ -27,15 +26,26 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Bundesjugensspiel App',
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-      ),
-      home: BlocProvider(
-        create: (context) => ClassesBloc(apiClient: apiClient),
-        child: BJSInterface(),
-      ),
-    );
+        title: 'Bundesjugensspiel App',
+        theme: ThemeData(
+          primarySwatch: Colors.indigo,
+        ),
+        home: MultiBlocProvider(
+          providers: [
+            BlocProvider<ClassesBloc>(
+              create: (BuildContext context) {
+                var bloc = ClassesBloc(apiClient: apiClient);
+                bloc.add(FetchClasses());
+                return bloc;
+              },
+            ),
+            BlocProvider<StudentsBloc>(
+              create: (BuildContext context) =>
+                  StudentsBloc(apiClient: apiClient),
+            )
+          ],
+          child: BJSInterface(),
+        ));
   }
 }
 
@@ -49,33 +59,46 @@ class _BJSInterfaceState extends State<BJSInterface> {
 
   List<Widget> _widgetOptions = [
     ClassesPage(),
-    ClassPage(schoolClass: SchoolClass(
-        name: "A",
-        grade: "7",
-        teacherName: "Gutsche",
-        url: "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes/23")),
+    ClassPage(
+        schoolClass: SchoolClass(
+            name: "A",
+            grade: "7",
+            teacherName: "Gutsche",
+            url:
+                "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes/23")),
     Center(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: _widgetOptions.elementAt(_selectedIndex),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-                icon: Icon(Icons.class_), title: Text("Klassen")),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.school), title: Text("Schüler")),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.text_fields), title: Text("Ergebnisse"))
-          ],
-          currentIndex: _selectedIndex,
-          onTap: (index) {
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<StudentsBloc, StudentsState>(listener: (BuildContext context, state) {
+          if (state is StudentsLoading) {
             setState(() {
-              _selectedIndex = index;
+              _selectedIndex = 1;
             });
-          },
-        ));
+          }
+        })
+      ],
+      child: Scaffold(
+          body: _widgetOptions.elementAt(_selectedIndex),
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.class_), title: Text("Klassen")),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.school), title: Text("Schüler")),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.text_fields), title: Text("Ergebnisse"))
+            ],
+            currentIndex: _selectedIndex,
+            onTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+          )),
+    );
   }
 }

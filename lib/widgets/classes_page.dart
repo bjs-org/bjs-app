@@ -22,28 +22,42 @@ class _ClassesPageState extends State<ClassesPage> {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<ClassesBloc>(context).add(FetchClasses());
     return RefreshIndicator(
         onRefresh: () => _onRefresh(context),
-        child: BlocBuilder<ClassesBloc, ClassesState>(
-          builder: (context, state) {
-            if (state is ClassesEmpty) {
-              return Center(child: Text("Nothing here"));
-            }
-            if (state is ClassesLoading) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (state is ClassesLoaded) {
-              _refreshCompleter?.complete();
-              _refreshCompleter = Completer();
-              return ClassesListView(state.classes);
-            }
-            if (state is ClassesError) {
-              return Center(child: Text("Something went wrong"));
-            }
-            return Center();
-          },
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text("All Classes"),
+              ),
+              primary: true,
+              pinned: true,
+              expandedHeight: 150.0,
+            ),
+            BlocBuilder<ClassesBloc, ClassesState>(
+              builder: (context, state) => _buildFromClassesState(state),
+            ),
+          ],
         ));
+  }
+
+  Widget _buildFromClassesState(ClassesState state) {
+    if (state is ClassesEmpty) {
+      return convertToSliver(Text("Nothing here"));
+    }
+    if (state is ClassesLoading) {
+      return convertToSliver(Center(child: CircularProgressIndicator()));
+    }
+    if (state is ClassesError) {
+      return convertToSliver(Center(child: Text("Something went wrong")));
+    }
+
+    if (state is ClassesLoaded) {
+      _refreshCompleter?.complete();
+      _refreshCompleter = Completer();
+      return ClassesListView(state.classes);
+    }
+    return SliverToBoxAdapter(child: Center());
   }
 
   Future<void> _onRefresh(BuildContext context) {

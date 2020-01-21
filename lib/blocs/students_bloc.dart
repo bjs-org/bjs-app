@@ -4,14 +4,14 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
-abstract class StudentEvent extends Equatable {
-  const StudentEvent();
+abstract class StudentsEvent extends Equatable {
+  const StudentsEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class FetchStudentsForClass extends StudentEvent {
+class FetchStudentsForClass extends StudentsEvent {
   final SchoolClass schoolClass;
 
   const FetchStudentsForClass({@required this.schoolClass}) : assert(schoolClass != null);
@@ -20,18 +20,18 @@ class FetchStudentsForClass extends StudentEvent {
   List<Object> get props => [schoolClass];
 }
 
-abstract class StudentState extends Equatable {
-  const StudentState();
+abstract class StudentsState extends Equatable {
+  const StudentsState();
 
   @override
   List<Object> get props => [];
 }
 
-class StudentsEmpty extends StudentState {}
+class StudentsEmpty extends StudentsState {}
 
-class StudentsLoading extends StudentState {}
+class StudentsLoading extends StudentsState {}
 
-class StudentsLoaded extends StudentState {
+class StudentsLoaded extends StudentsState {
   final List<Student> students;
 
   StudentsLoaded({@required this.students}) : assert(students != null);
@@ -40,18 +40,18 @@ class StudentsLoaded extends StudentState {
   List<Object> get props => [students];
 }
 
-class StudentsError extends StudentState {}
+class StudentsError extends StudentsState {}
 
-class StudentBloc extends Bloc<StudentEvent, StudentState> {
+class StudentsBloc extends Bloc<StudentsEvent, StudentsState> {
   final BjsApiClient apiClient;
 
-  StudentBloc({@required this.apiClient});
+  StudentsBloc({@required this.apiClient});
 
   @override
-  StudentState get initialState => StudentsEmpty();
+  StudentsState get initialState => StudentsEmpty();
 
   @override
-  Stream<StudentState> mapEventToState(StudentEvent event) async* {
+  Stream<StudentsState> mapEventToState(StudentsEvent event) async* {
     if (event is FetchStudentsForClass) {
       yield StudentsLoading();
 

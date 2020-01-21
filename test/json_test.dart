@@ -116,5 +116,7 @@ void main() {
     expect(students[0].birthDay.year, 2001);
     expect(students[0].birthDay.month, 8);
     expect(students[0].birthDay.day, 31);
+
+    expect(students[1].lastName, "Heß");
   });
 }
