@@ -55,34 +55,58 @@ class BJSInterface extends StatefulWidget {
 }
 
 class _BJSInterfaceState extends State<BJSInterface> {
+  PageController _pageController;
+
   int _selectedIndex = 0;
 
-  List<Widget> _widgetOptions = [
-    ClassesPage(),
-    ClassPage(
-        schoolClass: SchoolClass(
-            name: "A",
-            grade: "7",
-            teacherName: "Gutsche",
-            url:
-                "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes/23")),
-    Center(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = 0;
+    _pageController = PageController(
+      initialPage: _selectedIndex,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageController.dispose();
+  }
+
+  _setPage(int index, BuildContext context) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    _pageController.animateToPage(
+      _selectedIndex,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOutCubic,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<StudentsBloc, StudentsState>(listener: (BuildContext context, state) {
+        BlocListener<StudentsBloc, StudentsState>(
+            listener: (BuildContext context, state) {
           if (state is StudentsLoading) {
-            setState(() {
-              _selectedIndex = 1;
-            });
+            setState(() {});
           }
         })
       ],
       child: Scaffold(
-          body: _widgetOptions.elementAt(_selectedIndex),
+          body: PageView(
+            children: [
+              ClassesPage(),
+              ClassPage(
+                  schoolClass: SchoolClass(
+                      name: "B", grade: "8", teacherName: "Gutsche", url: "")),
+              Center(),
+            ],
+            controller: _pageController,
+          ),
           bottomNavigationBar: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
@@ -93,11 +117,7 @@ class _BJSInterfaceState extends State<BJSInterface> {
                   icon: Icon(Icons.text_fields), title: Text("Ergebnisse"))
             ],
             currentIndex: _selectedIndex,
-            onTap: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
+            onTap: (index) => _setPage(index, context),
           )),
     );
   }
