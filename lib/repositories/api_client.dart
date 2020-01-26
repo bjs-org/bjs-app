@@ -1,10 +1,11 @@
-import 'package:bjs/models/models.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:meta/meta.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:bjs/models/models.dart';
 import 'package:bjs/models/schoolClass.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
+
 import 'response_parser.dart';
 
 class BjsApiClient {
@@ -32,7 +33,7 @@ class BjsApiClient {
       throw Exception("Could not fetch classes");
     }
 
-    return parseSchoolClasses(response.body);
+    return parseSchoolClasses(utf8.decode(response.bodyBytes));
   }
 
   Future<List<Student>> fetchStudentsForClass(String classUrl) async {
@@ -40,10 +41,21 @@ class BjsApiClient {
     final response = await this.client.get(locationUrl, headers: _headers());
 
     if (response.statusCode != 200) {
-      throw Exception("Coult not fetch students");
+      throw Exception("Could not fetch students");
     }
 
-    return parseStudents(response.body);
+    return parseStudents(utf8.decode(response.bodyBytes));
+  }
+
+  Future<List<Student>> fetchStudents() async{
+    final locationUrl = "$baseUrl/students";
+    final response = await this.client.get(locationUrl, headers: _headers());
+
+    if (response.statusCode != 200) {
+      throw Exception("Could not fetch students");
+    }
+
+    return parseStudents(utf8.decode(response.bodyBytes));
   }
 
 }

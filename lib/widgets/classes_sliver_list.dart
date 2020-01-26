@@ -1,7 +1,7 @@
 import 'package:bjs/models/schoolClass.dart';
-import 'package:bjs/blocs/blocs.dart';
+import 'package:bjs/states/states.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 class ClassesListView extends StatelessWidget {
   final List<SchoolClass> classes;
@@ -18,10 +18,7 @@ class ClassesListView extends StatelessWidget {
           style: TextStyle(fontSize: 24.0),
         ),
         subtitle: Text(schoolClass.teacherName),
-        onTap: () {
-          BlocProvider.of<StudentsBloc>(context)
-              .add(FetchStudentsForClass(schoolClass: schoolClass));
-        },
+        onTap: () => Provider.of<StudentsPageState>(context, listen: false).currentlyShownClasses(schoolClass)
       ),
     );
   }
