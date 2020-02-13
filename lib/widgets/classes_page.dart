@@ -14,21 +14,17 @@ class _ClassesPageState extends State<ClassesPage> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-        onRefresh: () async => await Provider.of<ClassesPageState>(context, listen: false).updateClasses(),
+        onRefresh: () async =>
+        await Provider.of<ClassesPageState>(context, listen: false)
+            .updateClasses(),
         child: CustomScrollView(
           slivers: [
-            SliverAppBar(
-              flexibleSpace: FlexibleSpaceBar(
-                title: Text("Alle Klassen"),
-              ),
-              primary: true,
-              pinned: true,
-              expandedHeight: 150.0,
-            ),
+            ClassesSliverAppBar(),
             Consumer<ClassesPageState>(
               builder: (_, value, child) {
                 if (value.isLoading) {
-                  return convertToSliver(Center(child: CircularProgressIndicator()));
+                  return convertToSliver(
+                      Center(child: CircularProgressIndicator()));
                 } else {
                   return ClassesListView(value.classes.toList());
                 }
@@ -36,6 +32,29 @@ class _ClassesPageState extends State<ClassesPage> {
             ),
           ],
         ));
+  }
+
+}
+
+class ClassesSliverAppBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text("Alle Klassen"),
+      ),
+      primary: true,
+      pinned: true,
+      expandedHeight: 150.0,
+      actions: [
+        IconButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed("/create_class");
+          },
+          icon: Icon(Icons.add),
+        )
+      ],
+    );
   }
 
 }

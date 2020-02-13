@@ -22,7 +22,7 @@ class StudentsPageState extends ChangeNotifier {
 
   SchoolClass get currentlyShownClass => _currentlyShownClass;
 
-  void currentlyShownClasses(SchoolClass value) {
+  set currentlyShownClass(SchoolClass value) {
     if (identical(currentlyShownClass, value)) {
       notifyListeners();
 
@@ -37,12 +37,12 @@ class StudentsPageState extends ChangeNotifier {
   }
 
   showAllStudents() {
-    currentlyShownClasses(null);
+    this.currentlyShownClass = null;
   }
 
   Future<void> updateStudents() async {
     if (_currentClassIsValid()) {
-      _students = await _apiClient.fetchStudentsForClass(currentlyShownClass.url);
+      _students = await _apiClient.fetchStudentsForClass(currentlyShownClass);
       notifyListeners();
     } else {
       _students = await _apiClient.fetchStudents();

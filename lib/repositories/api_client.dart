@@ -21,7 +21,10 @@ class BjsApiClient {
     String basicAuth =
         'Basic ${base64Encode(utf8.encode('$username:$password'))}';
 
-    return {'Authorization': basicAuth};
+    return {
+      'Authorization': basicAuth,
+      'Content-Type': 'application/json'
+    };
   }
 
 
@@ -36,9 +39,8 @@ class BjsApiClient {
     return parseSchoolClasses(utf8.decode(response.bodyBytes));
   }
 
-  Future<List<Student>> fetchStudentsForClass(String classUrl) async {
-    final locationUrl = "$baseUrl/students/search/findAllBySchoolClass?schoolClass=$classUrl";
-    final response = await this.client.get(locationUrl, headers: _headers());
+  Future<List<Student>> fetchStudentsForClass(SchoolClass schoolClass) async {
+    final response = await this.client.get(schoolClass.studentsUrl, headers: _headers());
 
     if (response.statusCode != 200) {
       throw Exception("Could not fetch students");
@@ -57,5 +59,18 @@ class BjsApiClient {
 
     return parseStudents(utf8.decode(response.bodyBytes));
   }
+
+  Future<void> postSchoolClass(SchoolClass schoolClass) async {
+    final locationUrl = "$baseUrl/classes";
+    final String json = jsonEncode(schoolClass);
+
+    final response = await this.client.post(locationUrl, headers: _headers(), body: json);
+
+    if (response.statusCode != 201) {
+      throw Exception("Could not create class");
+    }
+  }
+
+  Future<void> patchSchoolClass(SchoolClass schoolClass) async {}
 
 }

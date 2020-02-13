@@ -19,20 +19,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiProvider(
+      child: MaterialApp(
         title: 'Bundesjugensspiel App',
         theme: ThemeData(
           primarySwatch: Colors.indigo,
         ),
-        home: MultiProvider(
-          child: BJSInterface(),
-          providers: [
-            ChangeNotifierProvider<StudentsPageState>(
-                create: (_) => StudentsPageState(apiClient)),
-            ChangeNotifierProvider<ClassesPageState>(
-                create: (_) => ClassesPageState(apiClient))
-          ],
-        ));
+        home: BJSInterface(),
+        routes: {
+          "/create_class": (_) => CreateClass(),
+        },
+      ),
+      providers: [
+        ChangeNotifierProvider<CreateClassNotifier>(
+          create: (_) => CreateClassNotifier(apiClient),
+        ),
+        ChangeNotifierProvider<StudentsPageState>(
+            create: (_) => StudentsPageState(apiClient)
+        ),
+        ChangeNotifierProvider<ClassesPageState>(
+            create: (_) => ClassesPageState(apiClient)
+        )
+      ],
+    );
   }
 }
 
@@ -44,17 +53,14 @@ class BJSInterface extends StatefulWidget {
 class _BJSInterfaceState extends State<BJSInterface> {
   PageController _pageController;
   int _selectedIndex;
+  IndexNotifier indexNotifier = IndexNotifier();
+
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = 0;
-    _pageController = PageController(
-      initialPage: 0,
-      keepPage: true
-    );
-    Provider.of<StudentsPageState>(context, listen: false)
-        .addListener(() => _bottomTapped(1));
+    _pageController = PageController(initialPage: 0, keepPage: true);
   }
 
   @override
@@ -66,14 +72,17 @@ class _BJSInterfaceState extends State<BJSInterface> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: PageView(
-          children: [
-            ClassesPage(),
-            StudentsPage(),
-            Center(),
-          ],
-          onPageChanged: (index) => _pageChanged(index),
-          controller: _pageController,
+        body: ChangeNotifierProvider.value(
+          value: indexNotifier,
+          child: PageView(
+            children: [
+              ClassesPage(),
+              StudentsPage(),
+              Center(),
+            ],
+            onPageChanged: (index) => _pageChanged(index),
+            controller: _pageController,
+          ),
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
@@ -89,15 +98,17 @@ class _BJSInterfaceState extends State<BJSInterface> {
         ));
   }
 
+  _animateTo(int index) {
+    _bottomTapped(index);
+    _pageChanged(index);
+  }
+
   _bottomTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      _pageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOutCubic,
-      );
-    });
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   _pageChanged(int index) {
@@ -105,4 +116,12 @@ class _BJSInterfaceState extends State<BJSInterface> {
       _selectedIndex = index;
     });
   }
+
+  @override
+  void didUpdateWidget(BJSInterface oldWidget) {
+    indexNotifier.addListener(() => _animateTo(indexNotifier.index.index));
+    super.didUpdateWidget(oldWidget);
+  }
+
+
 }

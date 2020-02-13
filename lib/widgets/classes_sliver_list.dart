@@ -1,4 +1,5 @@
 import 'package:bjs/models/schoolClass.dart';
+import 'package:bjs/states/index_state.dart';
 import 'package:bjs/states/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,10 @@ class ClassesListView extends StatelessWidget {
           style: TextStyle(fontSize: 24.0),
         ),
         subtitle: Text(schoolClass.teacherName),
-        onTap: () => Provider.of<StudentsPageState>(context, listen: false).currentlyShownClasses(schoolClass)
+        onTap: () {
+          Provider.of<StudentsPageState>(context, listen: false).currentlyShownClass = schoolClass;
+          Provider.of<IndexNotifier>(context,listen: false).index = SelectedPage.StudentsPage;
+        },
       ),
     );
   }

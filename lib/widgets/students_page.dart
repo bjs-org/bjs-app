@@ -57,10 +57,15 @@ class StudentsInformationSliverAppBar extends StatelessWidget {
       expandedHeight: 150.0,
       leading: _buildLeading(context),
       actions: [
-        IconButton(
-          icon: Icon(Icons.edit),
-          onPressed: () {},
-        )
+        schoolClass != null
+            ? IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () async {
+                  Provider.of<CreateClassNotifier>(context, listen: false).editClass(schoolClass);
+                  Navigator.of(context).pushNamed("/create_class");
+                },
+              )
+            : Center(),
       ],
     );
   }

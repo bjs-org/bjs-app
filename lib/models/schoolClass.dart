@@ -1,10 +1,11 @@
 class SchoolClass {
-  final String name;
-  final String grade;
-  final String teacherName;
-  final String url;
+  String name;
+  String grade;
+  String teacherName;
+  String url;
+  String studentsUrl;
 
-  const SchoolClass({this.name, this.grade, this.teacherName, this.url});
+  SchoolClass({this.name, this.grade, this.teacherName, this.url, this.studentsUrl});
 
   factory SchoolClass.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -13,9 +14,13 @@ class SchoolClass {
         name: json["className"],
         grade: json["grade"],
         teacherName: json["classTeacherName"],
-        url: json["_links"]["self"]["href"]
+        url: json["_links"]["self"]["href"],
+        studentsUrl: parseLink(json["_links"]["students"])
     );
   }
+
+  Map<String, dynamic> toJson() =>
+      {"className": name, "grade": grade, "classTeacherName": teacherName};
 
   String get combinedName => '$grade$name';
 
@@ -26,4 +31,13 @@ class SchoolClass {
     }
     return gradeCompare;
   }
+}
+
+String parseLink(Map<String, dynamic> json) {
+  if (json.containsKey("templated") && json["templated"] == true) {
+    var templateString = json["href"] as String;
+    return templateString.replaceAll(new RegExp("\{.*\}"), "");
+  }
+
+  return json["href"];
 }
