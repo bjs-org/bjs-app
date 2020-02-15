@@ -3,12 +3,14 @@ import 'package:bjs/repositories/repositories.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
-class CreateClassNotifier extends ChangeNotifier {
+class ClassFormNotifier extends ChangeNotifier {
   final BjsApiClient _apiClient;
-  CreateClassNotifier(this._apiClient);
+  ClassFormNotifier(this._apiClient);
 
   SchoolClass _schoolClass;
   bool _existed;
+
+  bool get existed => _existed;
 
   SchoolClass get schoolClass => _schoolClass;
 

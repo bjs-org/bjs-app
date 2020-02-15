@@ -5,7 +5,8 @@ class SchoolClass {
   String url;
   String studentsUrl;
 
-  SchoolClass({this.name, this.grade, this.teacherName, this.url, this.studentsUrl});
+  SchoolClass(
+      {this.name, this.grade, this.teacherName, this.url, this.studentsUrl});
 
   factory SchoolClass.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -15,8 +16,7 @@ class SchoolClass {
         grade: json["grade"],
         teacherName: json["classTeacherName"],
         url: json["_links"]["self"]["href"],
-        studentsUrl: parseLink(json["_links"]["students"])
-    );
+        studentsUrl: parseLink(json["_links"]["students"]));
   }
 
   Map<String, dynamic> toJson() =>

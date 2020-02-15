@@ -1,20 +1,18 @@
-import 'package:bjs/models/models.dart';
 import 'package:bjs/states/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CreateClass extends StatefulWidget {
+class ClassForm extends StatefulWidget {
   @override
-  _CreateClassState createState() => _CreateClassState();
+  _ClassFormState createState() => _ClassFormState();
 }
 
-class _CreateClassState extends State<CreateClass> {
+class _ClassFormState extends State<ClassForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  SchoolClass _schoolClass = SchoolClass();
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<CreateClassNotifier>(context);
+    final state = Provider.of<ClassFormNotifier>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -22,7 +20,7 @@ class _CreateClassState extends State<CreateClass> {
           onPressed: () => Navigator.of(context).pop(),
           icon: Icon(Icons.arrow_back),
         ),
-        title: Text("Neue Klasse erstellen"),
+        title: Text(state.existed ? "Klasse bearbeiten" : "Neue Klasse erstellen"),
       ),
       body: SafeArea(
         bottom: false,
@@ -61,7 +59,7 @@ class _CreateClassState extends State<CreateClass> {
                   child: RaisedButton.icon(
                     icon: Icon(Icons.send),
                     onPressed: () => _onPressed(context),
-                    label: Text("Absenden"),
+                    label: Text("Speichern"),
                   ),
                 )
               ],
@@ -78,9 +76,9 @@ class _CreateClassState extends State<CreateClass> {
     if (formState.validate()) {
       formState.save();
 
-      var state = Provider.of<CreateClassNotifier>(context, listen: false);
+      var state = Provider.of<ClassFormNotifier>(context, listen: false);
       var classPageState =
-          Provider.of<ClassesPageState>(context, listen: false);
+          Provider.of<ClassesNotifier>(context, listen: false);
 
       state.send().then((_) => classPageState.updateClasses());
       Navigator.of(context).pop();

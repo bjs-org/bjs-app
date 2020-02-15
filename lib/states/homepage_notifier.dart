@@ -4,8 +4,7 @@ enum SelectedPage {
   ClassesPage, StudentsPage, SportResultsPage
 }
 
-
-class IndexNotifier extends ChangeNotifier {
+class HomepageNotifier extends ChangeNotifier {
   SelectedPage _page = SelectedPage.ClassesPage;
 
   set page(SelectedPage value) {

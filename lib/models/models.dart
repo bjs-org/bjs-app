@@ -1,2 +1,2 @@
-export 'schoolClass.dart';
+export 'school_class.dart';
 export 'student.dart';

@@ -1,11 +1,8 @@
 import 'package:bjs/models/models.dart';
 import 'package:bjs/states/states.dart';
-import 'package:bjs/widgets/helper.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:bjs/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'widgets.dart';
 
 class StudentsPage extends StatelessWidget {
   @override
@@ -13,20 +10,21 @@ class StudentsPage extends StatelessWidget {
     return RefreshIndicator(
       child: CustomScrollView(
         slivers: <Widget>[
-          Selector<StudentsPageState, SchoolClass>(
-            builder: (_, value, child) =>
-                StudentsInformationSliverAppBar(value),
-            selector: (_, value) => value.currentlyShownClass,
+          Selector<StudentsNotifier, SchoolClass>(
+            builder: (_, schoolClass, child) =>
+                StudentsSliverAppBar(schoolClass),
+            selector: (_, studentsNotifier) =>
+                studentsNotifier.currentlyShownClass,
           ),
-          Consumer<StudentsPageState>(
-            builder: (_, value, child) {
-              if (value.isLoading) {
+          Consumer<StudentsNotifier>(
+            builder: (_, studentsNotifier, child) {
+              if (studentsNotifier.isLoading) {
                 return convertToSliver(Center(
                   child: CircularProgressIndicator(),
                 ));
               } else {
                 return (StudentsSliverList(
-                  value.students.toList(),
+                  studentsNotifier.students.toList(),
                 ));
               }
             },
@@ -34,34 +32,34 @@ class StudentsPage extends StatelessWidget {
         ],
       ),
       onRefresh: () async =>
-          await Provider.of<StudentsPageState>(context, listen: false)
+          await Provider.of<StudentsNotifier>(context, listen: false)
               .updateStudents(),
     );
   }
 }
 
-class StudentsInformationSliverAppBar extends StatelessWidget {
+class StudentsSliverAppBar extends StatelessWidget {
   final SchoolClass schoolClass;
 
-  StudentsInformationSliverAppBar(this.schoolClass);
+  StudentsSliverAppBar(this.schoolClass);
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(
-            schoolClass != null ? schoolClass.combinedName : 'Alle Schüler'),
+        title: Text(schoolClass?.combinedName ?? 'Alle Schüler'),
       ),
       pinned: true,
       primary: true,
       expandedHeight: 150.0,
-      leading: _buildLeading(context),
+      leading: _closeButton(context),
       actions: [
         schoolClass != null
             ? IconButton(
                 icon: Icon(Icons.edit),
                 onPressed: () async {
-                  Provider.of<CreateClassNotifier>(context, listen: false).editClass(schoolClass);
+                  Provider.of<ClassFormNotifier>(context, listen: false)
+                      .editClass(schoolClass);
                   Navigator.of(context).pushNamed("/create_class");
                 },
               )
@@ -70,15 +68,15 @@ class StudentsInformationSliverAppBar extends StatelessWidget {
     );
   }
 
-  Widget _buildLeading(BuildContext context) {
+  Widget _closeButton(BuildContext context) {
     if (schoolClass != null) {
       return IconButton(
-          onPressed: () =>
-              Provider.of<StudentsPageState>(context, listen: false)
-                  .showAllStudents(),
-          icon: Icon(Icons.close));
+          onPressed: () => _showAllStudents(context), icon: Icon(Icons.close));
     } else {
       return Container();
     }
   }
+
+  _showAllStudents(BuildContext context) =>
+      Provider.of<StudentsNotifier>(context, listen: false).showAllStudents();
 }

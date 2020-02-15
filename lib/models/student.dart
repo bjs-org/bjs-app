@@ -6,6 +6,8 @@ class Student {
 
   Student({this.firstName, this.lastName, this.female, this.birthDay});
 
+  get combinedName => "$lastName $firstName";
+
   int compareTo(Student b) {
     var genderCompared =
         _convertToInt(female).compareTo(_convertToInt(b.female));

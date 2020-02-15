@@ -5,10 +5,10 @@ import 'package:bjs/models/models.dart';
 import 'package:bjs/repositories/repositories.dart';
 import 'package:flutter/widgets.dart';
 
-class StudentsPageState extends ChangeNotifier {
+class StudentsNotifier extends ChangeNotifier {
   final BjsApiClient _apiClient;
 
-  StudentsPageState(this._apiClient) {
+  StudentsNotifier(this._apiClient) {
     loadStudents();
   }
 

@@ -4,10 +4,10 @@ import 'package:bjs/models/models.dart';
 import 'package:bjs/repositories/repositories.dart';
 import 'package:flutter/foundation.dart';
 
-class ClassesPageState extends ChangeNotifier {
+class ClassesNotifier extends ChangeNotifier {
   final BjsApiClient _apiClient;
 
-  ClassesPageState(this._apiClient) {
+  ClassesNotifier(this._apiClient) {
     loadClasses();
   }
 

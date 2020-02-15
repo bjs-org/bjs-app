@@ -1,8 +1,7 @@
 import 'package:bjs/states/states.dart';
+import 'package:bjs/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'widgets.dart';
 
 class ClassesPage extends StatefulWidget {
   @override
@@ -10,23 +9,20 @@ class ClassesPage extends StatefulWidget {
 }
 
 class _ClassesPageState extends State<ClassesPage> {
-
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-        onRefresh: () async =>
-        await Provider.of<ClassesPageState>(context, listen: false)
-            .updateClasses(),
+        onRefresh: () async => await _updateClasses(context),
         child: CustomScrollView(
           slivers: [
             ClassesSliverAppBar(),
-            Consumer<ClassesPageState>(
+            Consumer<ClassesNotifier>(
               builder: (_, value, child) {
                 if (value.isLoading) {
                   return convertToSliver(
                       Center(child: CircularProgressIndicator()));
                 } else {
-                  return ClassesListView(value.classes.toList());
+                  return ClassesSliverList(value.classes.toList());
                 }
               },
             ),
@@ -34,6 +30,9 @@ class _ClassesPageState extends State<ClassesPage> {
         ));
   }
 
+  Future<void> _updateClasses(BuildContext context) async =>
+      await Provider.of<ClassesNotifier>(context, listen: false)
+          .updateClasses();
 }
 
 class ClassesSliverAppBar extends StatelessWidget {
@@ -49,7 +48,7 @@ class ClassesSliverAppBar extends StatelessWidget {
       actions: [
         IconButton(
           onPressed: () {
-            Provider.of<CreateClassNotifier>(context, listen: false).newClass();
+            Provider.of<ClassFormNotifier>(context, listen: false).newClass();
             Navigator.of(context).pushNamed("/create_class");
           },
           icon: Icon(Icons.add),
@@ -57,5 +56,4 @@ class ClassesSliverAppBar extends StatelessWidget {
       ],
     );
   }
-
 }
