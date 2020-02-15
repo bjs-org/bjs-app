@@ -49,6 +49,7 @@ class ClassesSliverAppBar extends StatelessWidget {
       actions: [
         IconButton(
           onPressed: () {
+            Provider.of<CreateClassNotifier>(context, listen: false).newClass();
             Navigator.of(context).pushNamed("/create_class");
           },
           icon: Icon(Icons.add),

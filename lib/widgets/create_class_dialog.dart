@@ -14,7 +14,7 @@ class _CreateClassState extends State<CreateClass> {
 
   @override
   Widget build(BuildContext context) {
-    final state = Provider.of<CreateClassNotifier>(context, listen: false);
+    final state = Provider.of<CreateClassNotifier>(context);
 
     return Scaffold(
       appBar: AppBar(

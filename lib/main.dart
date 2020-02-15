@@ -53,7 +53,7 @@ class BJSInterface extends StatefulWidget {
 class _BJSInterfaceState extends State<BJSInterface> {
   PageController _pageController;
   int _selectedIndex;
-  IndexNotifier indexNotifier = IndexNotifier();
+  IndexNotifier _indexNotifier = IndexNotifier();
 
 
   @override
@@ -61,11 +61,13 @@ class _BJSInterfaceState extends State<BJSInterface> {
     super.initState();
     _selectedIndex = 0;
     _pageController = PageController(initialPage: 0, keepPage: true);
+    _indexNotifier.addListener(() => _animateTo(_indexNotifier.index));
   }
 
   @override
   void dispose() {
     super.dispose();
+    _indexNotifier.dispose();
     _pageController.dispose();
   }
 
@@ -73,7 +75,7 @@ class _BJSInterfaceState extends State<BJSInterface> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: ChangeNotifierProvider.value(
-          value: indexNotifier,
+          value: _indexNotifier,
           child: PageView(
             children: [
               ClassesPage(),
@@ -115,12 +117,6 @@ class _BJSInterfaceState extends State<BJSInterface> {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  @override
-  void didUpdateWidget(BJSInterface oldWidget) {
-    indexNotifier.addListener(() => _animateTo(indexNotifier.index.index));
-    super.didUpdateWidget(oldWidget);
   }
 
 

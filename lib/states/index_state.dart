@@ -6,12 +6,12 @@ enum SelectedPage {
 
 
 class IndexNotifier extends ChangeNotifier {
-  SelectedPage _index;
+  SelectedPage _page = SelectedPage.ClassesPage;
 
-  SelectedPage get index => _index;
-
-  set index(SelectedPage value) {
-    _index = value;
+  set page(SelectedPage value) {
+    _page = value;
     notifyListeners();
   }
+
+  int get index => _page.index;
 }
