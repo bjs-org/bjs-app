@@ -38,22 +38,19 @@ class _ClassesPageState extends State<ClassesPage> {
 class ClassesSliverAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SliverAppBar(
-      flexibleSpace: FlexibleSpaceBar(
-        title: Text("Alle Klassen"),
-      ),
-      primary: true,
-      pinned: true,
-      expandedHeight: 150.0,
-      actions: [
+    return GenericSliverAppBar(
+      title: "Alle Klassen",
+      actions: <Widget>[
         IconButton(
-          onPressed: () {
-            Provider.of<ClassFormNotifier>(context, listen: false).newClass();
-            Navigator.of(context).pushNamed("/create_class");
-          },
+          onPressed: () => _newClass(context),
           icon: Icon(Icons.add),
         )
       ],
     );
+  }
+
+  void _newClass(BuildContext context) {
+    Provider.of<ClassFormNotifier>(context, listen: false).newClass();
+    Navigator.of(context).pushNamed("/create_class");
   }
 }

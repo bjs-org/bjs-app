@@ -45,36 +45,38 @@ class StudentsSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverAppBar(
-      flexibleSpace: FlexibleSpaceBar(
-        title: Text(schoolClass?.combinedName ?? 'Alle Schüler'),
-      ),
-      pinned: true,
-      primary: true,
-      expandedHeight: 150.0,
-      leading: _closeButton(context),
-      actions: [
-        schoolClass != null
-            ? IconButton(
+    return schoolClass != null
+        ? GenericSliverAppBar(
+            title: schoolClass?.combinedName ?? 'Alle Schüler',
+            leading: IconButton(
+                onPressed: () => _showAllStudents(context),
+                icon: Icon(Icons.close)),
+            actions: <Widget>[
+              IconButton(
                 icon: Icon(Icons.edit),
-                onPressed: () async {
-                  Provider.of<ClassFormNotifier>(context, listen: false)
-                      .editClass(schoolClass);
-                  Navigator.of(context).pushNamed("/create_class");
-                },
+                onPressed: () => _editClass(context),
+              ),
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {},
               )
-            : Center(),
-      ],
-    );
+            ],
+          )
+        : GenericSliverAppBar(
+            title: 'Alle Schüler',
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {},
+              )
+            ],
+          );
   }
 
-  Widget _closeButton(BuildContext context) {
-    if (schoolClass != null) {
-      return IconButton(
-          onPressed: () => _showAllStudents(context), icon: Icon(Icons.close));
-    } else {
-      return Container();
-    }
+  _editClass(BuildContext context) {
+    Provider.of<ClassFormNotifier>(context, listen: false)
+        .editClass(schoolClass);
+    Navigator.of(context).pushNamed("/create_class");
   }
 
   _showAllStudents(BuildContext context) =>
