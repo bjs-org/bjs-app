@@ -49,7 +49,7 @@ class StudentsSliverAppBar extends StatelessWidget {
         ? GenericSliverAppBar(
             title: schoolClass?.combinedName ?? 'Alle Schüler',
             leading: IconButton(
-                onPressed: () => _showAllStudents(context),
+                onPressed: () => _closeClass(context),
                 icon: Icon(Icons.close)),
             actions: <Widget>[
               IconButton(
@@ -79,6 +79,8 @@ class StudentsSliverAppBar extends StatelessWidget {
     Navigator.of(context).pushNamed("/create_class");
   }
 
-  _showAllStudents(BuildContext context) =>
-      Provider.of<StudentsNotifier>(context, listen: false).showAllStudents();
+  _closeClass(BuildContext context) {
+    Provider.of<HomepageNotifier>(context,listen: false).page = SelectedPage.ClassesPage;
+    Provider.of<StudentsNotifier>(context, listen: false).showAllStudents();
+  }
 }

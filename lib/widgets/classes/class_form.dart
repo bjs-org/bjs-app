@@ -20,7 +20,8 @@ class _ClassFormState extends State<ClassForm> {
           onPressed: () => Navigator.of(context).pop(),
           icon: Icon(Icons.arrow_back),
         ),
-        title: Text(state.existed ? "Klasse bearbeiten" : "Neue Klasse erstellen"),
+        title:
+            Text(state.existed ? "Klasse bearbeiten" : "Neue Klasse erstellen"),
       ),
       body: SafeArea(
         bottom: false,
@@ -56,19 +57,14 @@ class _ClassFormState extends State<ClassForm> {
                       labelText: "Klassenlehrer", icon: Icon(Icons.person)),
                   onSaved: (value) => state.schoolClass.teacherName = value,
                 ),
-                Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 27.0, horizontal: 8.0),
-                  child: RaisedButton.icon(
-                    icon: Icon(Icons.send),
-                    onPressed: () async => await _onPressed(context),
-                    label: Text("Speichern"),
-                  ),
-                )
               ],
             ),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.send),
+        onPressed: () async => await _onPressed(context),
       ),
     );
   }
@@ -80,13 +76,12 @@ class _ClassFormState extends State<ClassForm> {
       formState.save();
 
       var state = Provider.of<ClassFormNotifier>(context, listen: false);
-      var classPageState =
-          Provider.of<ClassesNotifier>(context, listen: false);
-
-      Navigator.of(context).pop();
+      var classPageState = Provider.of<ClassesNotifier>(context, listen: false);
 
       await state.send();
       await classPageState.updateClasses();
+
+      Navigator.of(context).pop();
     }
   }
 }

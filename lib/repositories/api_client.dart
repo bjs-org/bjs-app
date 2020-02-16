@@ -60,15 +60,22 @@ class BjsApiClient {
 
   Future<void> postSchoolClass(SchoolClass schoolClass) async {
     final locationUrl = "$baseUrl/classes";
-    final String json = jsonEncode(schoolClass);
+    final String jsonString = jsonEncode(schoolClass);
 
     final response =
-        await this.client.post(locationUrl, headers: _headers(), body: json);
+        await this.client.post(locationUrl, headers: _headers(), body: jsonString);
 
     if (response.statusCode != 201) {
       throw Exception("Could not create class");
     }
   }
 
-  Future<void> patchSchoolClass(SchoolClass schoolClass) async {}
+  Future<void> patchSchoolClass(SchoolClass schoolClass) async {
+    final String jsonString = jsonEncode(schoolClass);
+    final response = await this.client.patch(schoolClass.url, headers: _headers(), body: jsonString);
+
+    if (response.statusCode != 204) {
+      throw Exception("Could not patch class");
+    }
+  }
 }
