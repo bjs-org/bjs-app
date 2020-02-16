@@ -4,36 +4,40 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test("Parses classes JSON", () {
-    const json = """{  
-        "_embedded": {
-          "classes": [
-            {
-              "grade": "7",
-              "className": "A",
-              "classTeacherName": "Gutsche",
-              "_links": {
-                "self": {
-                  "href": "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes/23"
-                },
-                "class": {
-                  "href": "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes/23"
-                }
-              }
-            }
-          ]
-        },
+    const json = """{
+  "_embedded": {
+    "classes": [
+      {
+        "grade": "7",
+        "className": "A",
+        "classTeacherName": "Gutsche",
         "_links": {
           "self": {
-            "href": "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes"
+            "href": "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes/23"
           },
-          "profile": {
-            "href": "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/profile/classes"
+          "class": {
+            "href": "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes/23"
           },
-          "search": {
-            "href": "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes/search"
+          "students": {
+            "href": "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes/23/students{?projection}",
+            "templated": true
           }
         }
-      }""";
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes"
+    },
+    "profile": {
+      "href": "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/profile/classes"
+    },
+    "search": {
+      "href": "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1/classes/search"
+    }
+  }
+}""";
 
     List<SchoolClass> parsed = parseSchoolClasses(json);
 

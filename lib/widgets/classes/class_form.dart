@@ -32,6 +32,7 @@ class _ClassFormState extends State<ClassForm> {
               padding: EdgeInsets.symmetric(horizontal: 8.0),
               children: [
                 TextFormField(
+                  key: Key("gradeFormField"),
                   initialValue: state.schoolClass?.grade ?? '',
                   decoration: const InputDecoration(
                       labelText: "Stufe",
@@ -40,6 +41,7 @@ class _ClassFormState extends State<ClassForm> {
                   onSaved: (value) => state.schoolClass.grade = value,
                 ),
                 TextFormField(
+                  key: Key("classFormField"),
                   initialValue: state.schoolClass?.name ?? '',
                   decoration: const InputDecoration(
                       labelText: "Klasse",
@@ -48,6 +50,7 @@ class _ClassFormState extends State<ClassForm> {
                   onSaved: (value) => state.schoolClass.name = value,
                 ),
                 TextFormField(
+                  key: Key("teacherFormField"),
                   initialValue: state.schoolClass?.teacherName ?? '',
                   decoration: const InputDecoration(
                       labelText: "Klassenlehrer", icon: Icon(Icons.person)),
@@ -58,7 +61,7 @@ class _ClassFormState extends State<ClassForm> {
                       EdgeInsets.symmetric(vertical: 27.0, horizontal: 8.0),
                   child: RaisedButton.icon(
                     icon: Icon(Icons.send),
-                    onPressed: () => _onPressed(context),
+                    onPressed: () async => await _onPressed(context),
                     label: Text("Speichern"),
                   ),
                 )
@@ -70,7 +73,7 @@ class _ClassFormState extends State<ClassForm> {
     );
   }
 
-  void _onPressed(BuildContext context) {
+  Future<void> _onPressed(BuildContext context) async {
     var formState = _formKey.currentState;
 
     if (formState.validate()) {
@@ -80,8 +83,10 @@ class _ClassFormState extends State<ClassForm> {
       var classPageState =
           Provider.of<ClassesNotifier>(context, listen: false);
 
-      state.send().then((_) => classPageState.updateClasses());
       Navigator.of(context).pop();
+
+      await state.send();
+      await classPageState.updateClasses();
     }
   }
 }
