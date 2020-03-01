@@ -1,3 +1,6 @@
+![CI](https://github.com/bjs-org/bjs-app/workflows/CI/badge.svg) 
+![GitHub](https://img.shields.io/github/license/bjs-org/bjs-app)
+
 # BJS-APP
 
 This app serves as an client for the [BJS-API](https://github.com/bjs-org/bjs-api). 
