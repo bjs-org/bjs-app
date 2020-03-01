@@ -1,16 +1,7 @@
-# flutter_app
+# BJS-APP
 
-BJS App
+This app serves as an client for the [BJS-API](https://github.com/bjs-org/bjs-api). 
+It's made with [flutter](https://flutter.dev/) and implements the material design.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Goal
+This app should be as intuitiv as possible, to guarantee that all teachers and student are able to use this as an assistance, not a burden.
