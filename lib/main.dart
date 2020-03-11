@@ -21,25 +21,22 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       child: MaterialApp(
-        title: 'Bundesjugensspiel App',
-        theme: ThemeData(
-          primarySwatch: Colors.indigo,
-        ),
-        home: AppHomepage(),
-        routes: {
-          "/create_class": (_) => ClassForm(),
-        },
-      ),
+          title: 'Bundesjugensspiel App',
+          theme: ThemeData(
+            primarySwatch: Colors.indigo,
+          ),
+          home: AppHomepage(),
+          routes: {
+            ClassForm.routeName: (_) => ClassForm(),
+          }),
       providers: [
-        ChangeNotifierProvider<ClassFormNotifier>(
-          create: (_) => ClassFormNotifier(apiClient),
+        Provider<BjsApiClient>.value(
+          value: apiClient,
         ),
         ChangeNotifierProvider<StudentsNotifier>(
-            create: (_) => StudentsNotifier(apiClient)
-        ),
+            create: (_) => StudentsNotifier(apiClient)),
         ChangeNotifierProvider<ClassesNotifier>(
-            create: (_) => ClassesNotifier(apiClient)
-        )
+            create: (_) => ClassesNotifier(apiClient))
       ],
     );
   }

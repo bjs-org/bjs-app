@@ -11,3 +11,4 @@ pubspec.lock
 *.iws
 .idea/
 doc/api/
+.vscode/

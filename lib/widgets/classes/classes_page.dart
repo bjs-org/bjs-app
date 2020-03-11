@@ -49,8 +49,10 @@ class ClassesSliverAppBar extends StatelessWidget {
     );
   }
 
-  void _newClass(BuildContext context) {
-    Provider.of<ClassFormNotifier>(context, listen: false).newClass();
-    Navigator.of(context).pushNamed("/create_class");
+  void _newClass(BuildContext context) async {
+    var shouldUpdate = await Navigator.of(context).pushNamed(ClassForm.routeName, arguments: null);
+    if (shouldUpdate) {
+      Provider.of<ClassesNotifier>(context, listen: false).updateClasses();
+    }
   }
 }

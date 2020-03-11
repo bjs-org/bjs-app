@@ -17,7 +17,7 @@ class ClassesSliverList extends StatelessWidget {
           schoolClass.combinedName,
           style: TextStyle(fontSize: 24.0),
         ),
-        subtitle: Text(schoolClass.teacherName),
+        subtitle: Text(schoolClass.teacherName ?? ""),
         onTap: () => _openClass(context, schoolClass),
       ),
     );
