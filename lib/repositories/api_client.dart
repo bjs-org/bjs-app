@@ -10,7 +10,7 @@ import 'response_parser.dart';
 
 class BjsApiClient {
   static const baseUrl =
-      "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net:8080/api/v1";
+      "http://raspberry-balena.gtdbqv7ic1ie9w3s.myfritz.net/api/v1";
   final http.Client client;
 
   BjsApiClient({@required this.client}) : assert(client != null);
