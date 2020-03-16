@@ -40,19 +40,7 @@ class ClassesSliverAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return GenericSliverAppBar(
       title: "Alle Klassen",
-      actions: <Widget>[
-        IconButton(
-          onPressed: () => _newClass(context),
-          icon: Icon(Icons.add),
-        )
-      ],
     );
   }
 
-  void _newClass(BuildContext context) async {
-    var shouldUpdate = await Navigator.of(context).pushNamed(ClassForm.routeName, arguments: null);
-    if (shouldUpdate) {
-      Provider.of<ClassesNotifier>(context, listen: false).updateClasses();
-    }
-  }
 }

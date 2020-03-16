@@ -1,5 +1,9 @@
+import 'package:bjs/models/models.dart';
+import 'package:bjs/repositories/api_client.dart';
 import 'package:bjs/states/states.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -11,73 +15,68 @@ class AppHomepage extends StatefulWidget {
 }
 
 class _AppHomepageState extends State<AppHomepage> {
-  PageController _pageController;
-  int _selectedIndex;
-  HomepageNotifier _indexNotifier = HomepageNotifier();
-
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedIndex = 0;
-    _pageController = PageController(initialPage: 0, keepPage: true);
-    _indexNotifier.addListener(() => _animateTo(_indexNotifier.index));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _indexNotifier.dispose();
-    _pageController.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: ChangeNotifierProvider.value(
-          value: _indexNotifier,
-          child: PageView(
-            children: [
-              ClassesPage(),
-              StudentsPage(),
-              Center(),
-            ],
-            onPageChanged: (index) => _pageChanged(index),
-            controller: _pageController,
-          ),
+      body: ClassesPage(),
+      floatingActionButton: Builder(
+        builder: (context) => FloatingActionButton.extended(
+          onPressed: () => _addClassDialog(context),
+          icon: Icon(Icons.add),
+          label: Text("Hinzufügen"),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-                icon: Icon(Icons.class_), title: Text("Klassen")),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.school), title: Text("Schüler")),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.text_fields), title: Text("Ergebnisse"))
-          ],
-          currentIndex: _selectedIndex,
-          onTap: (index) => _bottomTapped(index),
-        ));
-  }
-
-  _animateTo(int index) {
-    _bottomTapped(index);
-    _pageChanged(index);
-  }
-
-  _bottomTapped(int index) {
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeOutCubic,
+      ),
     );
   }
 
-  _pageChanged(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  Future<void> _addClassDialog(BuildContext context) async {
+    var newClass = await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      builder: (_) => ClassFormModalBottomSheet(),
+    );
+
+    if (newClass != null && newClass is SchoolClass) {
+      await Provider.of<BjsApiClient>(context, listen: false)
+          .postSchoolClass(newClass);
+      Provider.of<ClassesNotifier>(context, listen: false).updateClasses();
+    }
   }
+}
 
-
+class ClassFormModalBottomSheet extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.7,
+      builder: (context, controller) => Container(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            controller: controller,
+            children: <Widget>[
+              Container(
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.arrow_downward),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    Text(
+                      "Klasse hinzufügen",
+                      style: TextStyle(fontSize: 29, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(),
+              ClassForm(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

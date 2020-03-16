@@ -1,4 +1,5 @@
 import 'package:bjs/models/school_class.dart';
+import 'package:bjs/screens/class_screen.dart';
 import 'package:bjs/states/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,15 +19,14 @@ class ClassesSliverList extends StatelessWidget {
           style: TextStyle(fontSize: 24.0),
         ),
         subtitle: Text(schoolClass.teacherName ?? ""),
-        onTap: () => _openClass(context, schoolClass),
+        onTap: () async {
+          await Navigator.of(context).pushNamed(ClassRoute.routeName, arguments: schoolClass);
+          Provider.of<ClassesNotifier>(context, listen: false).updateClasses();
+        },
       ),
     );
   }
 
-  void _openClass(BuildContext context, SchoolClass schoolClass) {
-    Provider.of<StudentsNotifier>(context, listen: false).currentlyShownClass = schoolClass;
-    Provider.of<HomepageNotifier>(context,listen: false).page = SelectedPage.StudentsPage;
-  }
 
   @override
   Widget build(BuildContext context) {

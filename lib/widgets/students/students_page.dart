@@ -12,7 +12,7 @@ class StudentsPage extends StatelessWidget {
         slivers: <Widget>[
           Selector<StudentsNotifier, SchoolClass>(
             builder: (_, schoolClass, child) =>
-                StudentsSliverAppBar(schoolClass),
+                StudentsSliverAppBar(schoolClass: schoolClass),
             selector: (_, studentsNotifier) =>
                 studentsNotifier.currentlyShownClass,
           ),
@@ -38,38 +38,20 @@ class StudentsPage extends StatelessWidget {
   }
 }
 
-class StudentsSliverAppBar extends StatefulWidget {
+class StudentsSliverAppBar extends StatelessWidget {
   final SchoolClass schoolClass;
 
-  StudentsSliverAppBar(this.schoolClass);
-
-  @override
-  _StudentsSliverAppBarState createState() =>
-      _StudentsSliverAppBarState(schoolClass);
-}
-
-class _StudentsSliverAppBarState extends State<StudentsSliverAppBar> {
-  SchoolClass _schoolClass;
-
-  _StudentsSliverAppBarState(this._schoolClass);
+  const StudentsSliverAppBar({Key key, this.schoolClass}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return _schoolClass != null
+    return schoolClass != null
         ? GenericSliverAppBar(
-            title: _schoolClass?.combinedName ?? 'Alle Schüler',
+            title: schoolClass?.combinedName ?? 'Alle Schüler',
             leading: IconButton(
-                onPressed: () => _closeClass(context), icon: Icon(Icons.close)),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () => _editClass(context),
-              ),
-              IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {},
-              )
-            ],
+              onPressed: () => Navigator.of(context).pop(),
+              icon: Icon(Icons.close),
+            ),
           )
         : GenericSliverAppBar(
             title: 'Alle Schüler',
@@ -83,6 +65,7 @@ class _StudentsSliverAppBarState extends State<StudentsSliverAppBar> {
   }
 
   _editClass(BuildContext context) async {
+/*
     var _newSchoolClass = await Navigator.of(context)
         .pushNamed(ClassForm.routeName, arguments: _schoolClass);
 
@@ -91,11 +74,6 @@ class _StudentsSliverAppBarState extends State<StudentsSliverAppBar> {
         _schoolClass = _newSchoolClass;
       });
     }
-  }
-
-  _closeClass(BuildContext context) {
-    Provider.of<HomepageNotifier>(context, listen: false).page =
-        SelectedPage.ClassesPage;
-    Provider.of<StudentsNotifier>(context, listen: false).showAllStudents();
+*/
   }
 }
