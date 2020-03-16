@@ -5,7 +5,7 @@ import 'package:bjs/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ClassRoute extends StatelessWidget {
+class ClassScreen extends StatelessWidget {
   static const routeName = "/class";
 
   @override

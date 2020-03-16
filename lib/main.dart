@@ -1,7 +1,7 @@
 import 'package:bjs/repositories/repositories.dart';
 import 'package:bjs/screens/class_screen.dart';
+import 'package:bjs/screens/classes_screen.dart';
 import 'package:bjs/states/states.dart';
-import 'package:bjs/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -31,9 +31,9 @@ class App extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30)),
               textTheme: ButtonTextTheme.primary),
         ),
-        home: AppHomepage(),
+        home: ClassesScreen(),
         routes: {
-          ClassRoute.routeName : (_) => ClassRoute(),
+          ClassScreen.routeName : (_) => ClassScreen(),
         },
       ),
       providers: [

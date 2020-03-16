@@ -33,7 +33,9 @@ class BjsApiClient {
       throw Exception("Could not fetch classes");
     }
 
-    return parseSchoolClasses(utf8.decode(response.bodyBytes));
+    var classes = parseSchoolClasses(utf8.decode(response.bodyBytes));
+    classes.sort((a,b) => a.compareTo(b));
+    return classes;
   }
 
   Future<List<Student>> fetchStudentsForClass(SchoolClass schoolClass) async {
@@ -44,7 +46,9 @@ class BjsApiClient {
       throw Exception("Could not fetch students");
     }
 
-    return parseStudents(utf8.decode(response.bodyBytes));
+    var students = parseStudents(utf8.decode(response.bodyBytes));
+    students.sort((a,b) => a.compareTo(b));
+    return students;
   }
 
   Future<List<Student>> fetchStudents() async {
@@ -55,7 +59,9 @@ class BjsApiClient {
       throw Exception("Could not fetch students");
     }
 
-    return parseStudents(utf8.decode(response.bodyBytes));
+    var students = parseStudents(utf8.decode(response.bodyBytes));
+    students.sort((a,b) => a.compareTo(b));
+    return students;
   }
 
   Future<void> postSchoolClass(SchoolClass schoolClass) async {

@@ -8,34 +8,35 @@ class StudentsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
+      onRefresh: () async => await _updateStudents(context),
       child: CustomScrollView(
         slivers: <Widget>[
           Selector<StudentsNotifier, SchoolClass>(
-            builder: (_, schoolClass, child) =>
-                StudentsSliverAppBar(schoolClass: schoolClass),
             selector: (_, studentsNotifier) =>
                 studentsNotifier.currentlyShownClass,
+            builder: (_, schoolClass, child) =>
+                StudentsSliverAppBar(schoolClass: schoolClass),
           ),
           Consumer<StudentsNotifier>(
-            builder: (_, studentsNotifier, child) {
-              if (studentsNotifier.isLoading) {
-                return convertToSliver(Center(
-                  child: CircularProgressIndicator(),
-                ));
-              } else {
-                return (StudentsSliverList(
-                  studentsNotifier.students.toList(),
-                ));
-              }
-            },
+            builder: (_, studentsNotifier, child) => studentsNotifier.isLoading
+                ? SliverPadding(
+                    sliver: SliverToBoxAdapter(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                    padding: EdgeInsets.all(20.0),
+                  )
+                : StudentsSliverList(studentsNotifier.students),
           )
         ],
       ),
-      onRefresh: () async =>
-          await Provider.of<StudentsNotifier>(context, listen: false)
-              .updateStudents(),
     );
   }
+
+  Future<void> _updateStudents(BuildContext context) async =>
+      await Provider.of<StudentsNotifier>(context, listen: false)
+          .updateStudents();
 }
 
 class StudentsSliverAppBar extends StatelessWidget {
@@ -63,17 +64,38 @@ class StudentsSliverAppBar extends StatelessWidget {
             ],
           );
   }
+}
 
-  _editClass(BuildContext context) async {
-/*
-    var _newSchoolClass = await Navigator.of(context)
-        .pushNamed(ClassForm.routeName, arguments: _schoolClass);
+class StudentsSliverList extends StatelessWidget {
+  final List<Student> students;
 
-    if (_newSchoolClass is SchoolClass) {
-      setState(() {
-        _schoolClass = _newSchoolClass;
-      });
-    }
-*/
+  StudentsSliverList(this.students);
+
+  Widget _buildStudent(Student student, BuildContext context) {
+    return Card(
+      child: ListTile(
+          title: Text(
+            student.combinedName,
+            style: TextStyle(fontSize: 24.0),
+          ),
+          leading: CircleAvatar(
+            backgroundColor: student.female ? Colors.purple : Colors.indigo,
+          ),
+          onTap: () => _openStudent(context, student)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverList(
+        delegate: SliverChildListDelegate(students
+            .map((student) => _buildStudent(student, context))
+            .toList()));
+  }
+
+  void _openStudent(context, student) {
+    Provider.of<HomepageNotifier>(context, listen: false).page =
+        SelectedPage.SportResultsPage;
   }
 }
+

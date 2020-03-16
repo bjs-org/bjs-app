@@ -7,14 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-import 'widgets.dart';
+import '../widgets/widgets.dart';
 
-class AppHomepage extends StatefulWidget {
+class ClassesScreen extends StatefulWidget {
   @override
-  _AppHomepageState createState() => _AppHomepageState();
+  _ClassesScreenState createState() => _ClassesScreenState();
 }
 
-class _AppHomepageState extends State<AppHomepage> {
+class _ClassesScreenState extends State<ClassesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
