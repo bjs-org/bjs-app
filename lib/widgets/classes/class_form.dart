@@ -1,9 +1,99 @@
 import 'package:bjs/models/models.dart';
+import 'package:bjs/repositories/api_client.dart';
+import 'package:bjs/screens/students_screen.dart';
+import 'package:bjs/states/classes_notifier.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+class ClassFormModalBottomSheet extends StatefulWidget {
+  final SchoolClass schoolClass;
+
+  ClassFormModalBottomSheet({Key key, this.schoolClass}) : super(key: key);
+
+  @override
+  _ClassFormModalBottomSheetState createState() =>
+      _ClassFormModalBottomSheetState();
+}
+
+class _ClassFormModalBottomSheetState extends State<ClassFormModalBottomSheet> {
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.7,
+      builder: (context, controller) => Container(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            controller: controller,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.arrow_downward),
+                    onPressed: () => _closeModal(context),
+                  ),
+                  Flexible(
+                    flex: 5,
+                    child: Text(
+                      widget.schoolClass != null
+                          ? "Klasse bearbeiten"
+                          : "Klasse hinzufügen",
+                      style:
+                          TextStyle(fontSize: 29, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  widget.schoolClass != null
+                      ? IconButton(
+                          icon: Icon(Icons.delete_outline),
+                          onPressed: () async => await _deleteClass(
+                            context,
+                            widget.schoolClass,
+                          ),
+                        )
+                      : Spacer()
+                ],
+              ),
+              Divider(),
+              ClassForm(previousClass: widget.schoolClass),
+              if (widget.schoolClass != null) Divider(),
+              if (widget.schoolClass != null)
+                FractionallySizedBox(
+                  widthFactor: 0.95,
+                  child: RaisedButton.icon(
+                    onPressed: () async => await _showStudentsForClass(context),
+                    icon: Icon(Icons.remove_red_eye),
+                    label: Text("Schüler anzeigen"),
+                  ),
+                )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _closeModal(BuildContext context) => Navigator.of(context).pop();
+
+  Future<void> _showStudentsForClass(BuildContext context) async {
+    await Navigator.of(context).popAndPushNamed(
+      StudentsScreen.routeName,
+      arguments: widget.schoolClass,
+    );
+  }
+
+  Future<void> _deleteClass(context, SchoolClass schoolClass) async {
+    Provider.of<BjsApiClient>(context, listen: false).deleteClass(schoolClass);
+    Provider.of<ClassesNotifier>(context, listen: false).updateClasses();
+    _closeModal(context);
+  }
+}
 
 class ClassForm extends StatefulWidget {
+  final SchoolClass previousClass;
 
-  final previousClass;
   const ClassForm({Key key, this.previousClass}) : super(key: key);
 
   @override
@@ -11,9 +101,8 @@ class ClassForm extends StatefulWidget {
 }
 
 class _ClassFormState extends State<ClassForm> {
-
   final _formKey = GlobalKey<FormState>();
-  final classNameController = TextEditingController();
+  final _classNameController = TextEditingController();
 
   SchoolClass _currentClass;
 
@@ -21,11 +110,12 @@ class _ClassFormState extends State<ClassForm> {
   void initState() {
     super.initState();
     _currentClass = widget.previousClass ?? SchoolClass();
+    _classNameController.text = widget.previousClass?.name ?? "";
   }
 
   @override
   void dispose() {
-    classNameController.dispose();
+    _classNameController.dispose();
     super.dispose();
   }
 
@@ -36,6 +126,7 @@ class _ClassFormState extends State<ClassForm> {
       child: Column(
         children: <Widget>[
           TextFormField(
+            initialValue: widget.previousClass?.grade ?? "",
             decoration: InputDecoration(
               labelText: "Stufe",
               hintText: "7",
@@ -57,7 +148,7 @@ class _ClassFormState extends State<ClassForm> {
             padding: EdgeInsets.symmetric(vertical: 4.0),
           ),
           TextFormField(
-            controller: classNameController,
+            controller: _classNameController,
             decoration: InputDecoration(
               labelText: "Klasse",
               hintText: "A",
@@ -72,15 +163,16 @@ class _ClassFormState extends State<ClassForm> {
               return null;
             },
             onSaved: (value) => _currentClass.name = value,
-            onChanged: (value) => classNameController.value = TextEditingValue(
+            onChanged: (value) => _classNameController.value = TextEditingValue(
               text: value.toUpperCase(),
-              selection: classNameController.selection,
+              selection: _classNameController.selection,
             ),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 4.0),
           ),
           TextFormField(
+            initialValue: widget.previousClass?.teacherName ?? "",
             decoration: InputDecoration(
               labelText: "Klassenlehrer",
               border: OutlineInputBorder(

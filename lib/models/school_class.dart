@@ -19,8 +19,11 @@ class SchoolClass {
         studentsUrl: parseLink(json["_links"]["students"]));
   }
 
-  Map<String, dynamic> toJson() =>
-      {"className": name, "grade": grade, "classTeacherName": teacherName};
+  Map<String, dynamic> toJson() => {
+        if (name != null) "className": name,
+        if (grade != null) "grade": grade,
+        if (teacherName != null) "classTeacherName": teacherName,
+      };
 
   String get combinedName => '$grade$name';
 

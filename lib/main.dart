@@ -1,5 +1,5 @@
 import 'package:bjs/repositories/repositories.dart';
-import 'package:bjs/screens/class_screen.dart';
+import 'package:bjs/screens/students_screen.dart';
 import 'package:bjs/screens/classes_screen.dart';
 import 'package:bjs/states/states.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +33,7 @@ class App extends StatelessWidget {
         ),
         home: ClassesScreen(),
         routes: {
-          ClassScreen.routeName : (_) => ClassScreen(),
+          StudentsScreen.routeName : (_) => StudentsScreen(),
         },
       ),
       providers: [

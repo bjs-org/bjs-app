@@ -5,8 +5,8 @@ import 'package:bjs/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ClassScreen extends StatelessWidget {
-  static const routeName = "/class";
+class StudentsScreen extends StatelessWidget {
+  static const routeName = "/students";
 
   @override
   Widget build(BuildContext context) {

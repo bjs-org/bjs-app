@@ -84,4 +84,13 @@ class BjsApiClient {
       throw Exception("Could not patch class");
     }
   }
+
+  Future<void> deleteClass(SchoolClass schoolClass) async {
+    final response = await this.client.delete(schoolClass.url, headers: _headers());
+
+    if ( response.statusCode != 204) {
+      throw Exception("Could not delete class");
+    }
+  }
+
 }
