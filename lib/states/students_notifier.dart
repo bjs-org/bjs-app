@@ -8,7 +8,8 @@ import 'package:flutter/widgets.dart';
 class StudentsNotifier extends ChangeNotifier {
   final BjsApiClient _apiClient;
 
-  StudentsNotifier(this._apiClient) {
+  StudentsNotifier(this._apiClient, {SchoolClass initialClass}) {
+    this._currentlyShownClass = initialClass;
     loadStudents();
   }
 

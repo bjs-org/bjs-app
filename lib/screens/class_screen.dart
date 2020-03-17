@@ -12,13 +12,10 @@ class ClassScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final SchoolClass schoolClass = ModalRoute.of(context).settings.arguments;
     final BjsApiClient bjsApiClient = Provider.of<BjsApiClient>(context);
-    final StudentsNotifier notifier = StudentsNotifier(bjsApiClient);
-
-    notifier.currentlyShownClass = schoolClass;
 
     return Scaffold(
-      body: ChangeNotifierProvider.value(
-        value: notifier,
+      body: ChangeNotifierProvider(
+        create: (_) => StudentsNotifier(bjsApiClient, initialClass: schoolClass),
         child: StudentsPage(),
       ),
     );
