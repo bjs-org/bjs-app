@@ -13,6 +13,8 @@ class ClassForm extends StatefulWidget {
 class _ClassFormState extends State<ClassForm> {
 
   final _formKey = GlobalKey<FormState>();
+  final classNameController = TextEditingController();
+
   SchoolClass _currentClass;
 
   @override
@@ -22,47 +24,58 @@ class _ClassFormState extends State<ClassForm> {
   }
 
   @override
+  void dispose() {
+    classNameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       child: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Flexible(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: "Stufe",
-                    hintText: "7",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return "Dieses Feld darf nicht leer sein";
-                    }
-                    return null;
-                  },
-                  onSaved: (value) => _currentClass.grade = value,
-                ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: "Stufe",
+              hintText: "7",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.0),
+            ),
+            validator: (value) {
+              if (value.isEmpty) {
+                return "Dieses Feld darf nicht leer sein";
+              } else if (value.contains(" ")) {
+                return "Die Stufe darf keine Leerzeichen enthalten";
+              }
+              return null;
+            },
+            onSaved: (value) => _currentClass.grade = value,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 4.0),
+          ),
+          TextFormField(
+            controller: classNameController,
+            decoration: InputDecoration(
+              labelText: "Klasse",
+              hintText: "A",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
               ),
-              Flexible(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: "Klasse",
-                    hintText: "A",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  onSaved: (value) => _currentClass.name = value,
-                ),
-              )
-            ],
+            ),
+            validator: (value) {
+              if (value.contains(" ")) {
+                return "Der Klassenname darf keine Leerzeichen enthalten";
+              }
+              return null;
+            },
+            onSaved: (value) => _currentClass.name = value,
+            onChanged: (value) => classNameController.value = TextEditingValue(
+              text: value.toUpperCase(),
+              selection: classNameController.selection,
+            ),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 4.0),
