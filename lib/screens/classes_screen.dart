@@ -18,12 +18,10 @@ class _ClassesScreenState extends State<ClassesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ClassesView(),
-      floatingActionButton: Builder(
-        builder: (context) => FloatingActionButton.extended(
-          onPressed: () => _addClassDialog(context),
-          icon: Icon(Icons.add),
-          label: Text("Hinzufügen"),
-        ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _addClassDialog(context),
+        icon: Icon(Icons.add),
+        label: Text("Hinzufügen"),
       ),
     );
   }
@@ -32,8 +30,7 @@ class _ClassesScreenState extends State<ClassesScreen> {
     final newClass = await showSchoolClassModal(context);
 
     if (newClass != null && newClass is SchoolClass) {
-      await Provider.of<BjsApiClient>(context, listen: false)
-          .postSchoolClass(newClass);
+      await Provider.of<BjsApiClient>(context, listen: false).postSchoolClass(newClass);
       Provider.of<ClassesNotifier>(context, listen: false).updateClasses();
     }
   }

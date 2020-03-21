@@ -2,6 +2,7 @@ import 'package:bjs/models/models.dart';
 import 'package:bjs/repositories/api_client.dart';
 import 'package:bjs/screens/students_screen.dart';
 import 'package:bjs/states/classes_notifier.dart';
+import 'package:bjs/widgets/custom_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,66 +13,35 @@ class ClassFormModalBottomSheet extends StatefulWidget {
   ClassFormModalBottomSheet({Key key, this.schoolClass}) : super(key: key);
 
   @override
-  _ClassFormModalBottomSheetState createState() =>
-      _ClassFormModalBottomSheetState();
+  _ClassFormModalBottomSheetState createState() => _ClassFormModalBottomSheetState();
 }
 
 class _ClassFormModalBottomSheetState extends State<ClassFormModalBottomSheet> {
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      expand: false,
-      initialChildSize: 0.7,
-      builder: (context, controller) => Container(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListView(
-            controller: controller,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.arrow_downward),
-                    onPressed: () => _closeModal(context),
-                  ),
-                  Flexible(
-                    flex: 5,
-                    child: Text(
-                      widget.schoolClass != null
-                          ? "Klasse bearbeiten"
-                          : "Klasse hinzufügen",
-                      style:
-                          TextStyle(fontSize: 29, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  widget.schoolClass != null
-                      ? IconButton(
-                          icon: Icon(Icons.delete_outline),
-                          onPressed: () async => await _deleteClass(
-                            context,
-                            widget.schoolClass,
-                          ),
-                        )
-                      : Spacer()
-                ],
+    return CustomBottomSheet(
+      title: widget.schoolClass != null ? "Klasse bearbeiten" : "Klasse erstellen",
+      action: widget.schoolClass != null
+          ? IconButton(
+              icon: Icon(
+                Icons.delete,
               ),
-              Divider(),
-              ClassForm(previousClass: widget.schoolClass),
-              if (widget.schoolClass != null) Divider(),
-              if (widget.schoolClass != null)
-                FractionallySizedBox(
-                  widthFactor: 0.95,
-                  child: RaisedButton.icon(
-                    onPressed: () async => await _showStudentsForClass(context),
-                    icon: Icon(Icons.remove_red_eye),
-                    label: Text("Schüler anzeigen"),
-                  ),
-                )
-            ],
-          ),
-        ),
-      ),
+              onPressed: () => _closeModal(context),
+            )
+          : null,
+      children: <Widget>[
+        ClassForm(previousClass: widget.schoolClass),
+        if (widget.schoolClass != null) Divider(),
+        if (widget.schoolClass != null)
+          FractionallySizedBox(
+            widthFactor: 0.95,
+            child: RaisedButton.icon(
+              onPressed: () async => await _showStudentsForClass(context),
+              icon: Icon(Icons.remove_red_eye),
+              label: Text("Schüler anzeigen"),
+            ),
+          )
+      ],
     );
   }
 
