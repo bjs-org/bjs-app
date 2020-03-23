@@ -32,7 +32,7 @@ class CustomBottomSheet extends StatelessWidget {
 
   Widget _createHeader(context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         IconButton(
           icon: Icon(Icons.arrow_downward),

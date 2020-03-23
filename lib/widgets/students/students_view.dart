@@ -1,10 +1,11 @@
 import 'package:bjs/models/models.dart';
 import 'package:bjs/states/states.dart';
+import 'package:bjs/widgets/helper.dart';
 import 'package:bjs/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class StudentsPage extends StatelessWidget {
+class StudentsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -12,8 +13,7 @@ class StudentsPage extends StatelessWidget {
       child: CustomScrollView(
         slivers: <Widget>[
           Selector<StudentsNotifier, SchoolClass>(
-            selector: (_, studentsNotifier) =>
-                studentsNotifier.currentlyShownClass,
+            selector: (_, studentsNotifier) => studentsNotifier.currentlyShownClass,
             builder: (_, schoolClass, child) =>
                 StudentsSliverAppBar(schoolClass: schoolClass),
           ),
@@ -35,8 +35,7 @@ class StudentsPage extends StatelessWidget {
   }
 
   Future<void> _updateStudents(BuildContext context) async =>
-      await Provider.of<StudentsNotifier>(context, listen: false)
-          .updateStudents();
+      await Provider.of<StudentsNotifier>(context, listen: false).updateStudents();
 }
 
 class StudentsSliverAppBar extends StatelessWidget {
@@ -48,14 +47,16 @@ class StudentsSliverAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return schoolClass != null
         ? GenericSliverAppBar(
-            title: schoolClass?.combinedName ?? 'Alle Schüler',
-            leading: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.close),
-            ),
+            title: Text(schoolClass.combinedName),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () async => await _addStudent(context, schoolClass),
+              )
+            ],
           )
         : GenericSliverAppBar(
-            title: 'Alle Schüler',
+            title: Text('Alle Schüler'),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.add),
@@ -63,6 +64,15 @@ class StudentsSliverAppBar extends StatelessWidget {
               )
             ],
           );
+  }
+
+  Future<void> _addStudent(BuildContext context, SchoolClass schoolClass) async {
+    await showStudentModal(
+      context,
+      schoolClass: schoolClass,
+      onShouldUpdate: () =>
+          Provider.of<StudentsNotifier>(context, listen: false).updateStudents(),
+    );
   }
 }
 
@@ -81,21 +91,26 @@ class StudentsSliverList extends StatelessWidget {
           leading: CircleAvatar(
             backgroundColor: student.female ? Colors.purple : Colors.indigo,
           ),
-          onTap: () => _openStudent(context, student)),
+          onTap: () async => await _addResult(context, student),
+          onLongPress: () async => await _editStudent(context, student)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return SliverList(
-        delegate: SliverChildListDelegate(students
-            .map((student) => _buildStudent(student, context))
-            .toList()));
+        delegate: SliverChildListDelegate(
+            students.map((student) => _buildStudent(student, context)).toList()));
   }
 
-  void _openStudent(context, student) {
-    Provider.of<HomepageNotifier>(context, listen: false).page =
-        SelectedPage.SportResultsPage;
+  Future<void> _editStudent(context, student) async {
+    await showStudentModal(
+      context,
+      student: student,
+      onShouldUpdate: () =>
+          Provider.of<StudentsNotifier>(context, listen: false).updateStudents(),
+    );
   }
+
+  Future<void> _addResult(BuildContext context, Student student) async {}
 }
-

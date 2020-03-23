@@ -17,7 +17,7 @@ class StudentsScreen extends StatelessWidget {
     return Scaffold(
       body: ChangeNotifierProvider(
         create: (_) => StudentsNotifier(bjsApiClient, initialClass: schoolClass),
-        child: StudentsPage(),
+        child: StudentsView(),
       ),
       floatingActionButton: Builder(
         builder: (context) => FloatingActionButton.extended(

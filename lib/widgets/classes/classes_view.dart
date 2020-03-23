@@ -41,8 +41,20 @@ class ClassesSliverAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GenericSliverAppBar(
-      title: "Alle Klassen",
+      title: Text("Alle Klassen"),
+      actions: <Widget>[
+        IconButton(icon: Icon(Icons.add), onPressed: () async => await _addClassDialog(context),)
+      ],
     );
+  }
+
+  Future<void> _addClassDialog(BuildContext context) async {
+    final newClass = await showSchoolClassModal(context);
+
+    if (newClass != null && newClass is SchoolClass) {
+      await Provider.of<BjsApiClient>(context, listen: false).postSchoolClass(newClass);
+      Provider.of<ClassesNotifier>(context, listen: false).updateClasses();
+    }
   }
 }
 

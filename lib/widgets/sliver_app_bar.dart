@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class GenericSliverAppBar extends StatelessWidget {
 
-  final String title;
+  final Widget title;
   final List<Widget> actions;
   final Widget leading;
 
@@ -12,7 +12,7 @@ class GenericSliverAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(title),
+        title: title,
       ),
       primary: true,
       pinned: true,

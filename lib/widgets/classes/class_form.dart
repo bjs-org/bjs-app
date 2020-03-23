@@ -26,7 +26,7 @@ class _ClassFormModalBottomSheetState extends State<ClassFormModalBottomSheet> {
               icon: Icon(
                 Icons.delete,
               ),
-              onPressed: () => _closeModal(context),
+              onPressed: () => _deleteClass(context, widget.schoolClass),
             )
           : null,
       children: <Widget>[

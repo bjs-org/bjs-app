@@ -1,6 +1,7 @@
 import 'package:bjs/models/models.dart';
 import 'package:bjs/widgets/classes/class_form.dart';
 import 'package:bjs/widgets/multiple_result_form.dart';
+import 'package:bjs/widgets/students/student_form.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -21,3 +22,14 @@ Future<dynamic> showMultipleResultInput(context, SchoolClass schoolClass) async 
     builder: (_) => MultipleResultBottomSheet(schoolClass: schoolClass),
   );
 }
+
+Future<dynamic> showStudentModal(context, {SchoolClass schoolClass , Student student, Function onShouldUpdate}) async {
+  return await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    builder: (_) => StudentBottomSheet(schoolClass: schoolClass, student: student, onShouldUpdate: onShouldUpdate),
+  );
+}
+
+bool shouldUpdate(response) => response is Map && response.containsKey("should_update") && response["should_update"] == true;
