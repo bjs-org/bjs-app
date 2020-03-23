@@ -11,17 +11,20 @@ class StudentsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SchoolClass schoolClass = ModalRoute.of(context).settings.arguments;
-    final BjsApiClient bjsApiClient = Provider.of<BjsApiClient>(context);
+    final BjsApiClient bjsApiClient = Provider.of<BjsApiClient>(context, listen: false);
+
+    SchoolClass _schoolClass = ModalRoute.of(context).settings.arguments;
+    StudentsNotifier _studentsNotifier =
+        StudentsNotifier(bjsApiClient, initialClass: _schoolClass);
 
     return Scaffold(
-      body: ChangeNotifierProvider(
-        create: (_) => StudentsNotifier(bjsApiClient, initialClass: schoolClass),
+      body: ChangeNotifierProvider.value(
+        value: _studentsNotifier,
         child: StudentsView(),
       ),
       floatingActionButton: Builder(
         builder: (context) => FloatingActionButton.extended(
-          onPressed: () async => await _addMultipleResults(context, schoolClass),
+          onPressed: () async => await _addMultipleResults(context, _schoolClass),
           icon: Icon(Icons.table_chart),
           label: Text("Ergebnisse hinzufügen"),
         ),
@@ -33,4 +36,3 @@ class StudentsScreen extends StatelessWidget {
     await showMultipleResultInput(context, schoolClass);
   }
 }
-

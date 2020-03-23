@@ -1,4 +1,5 @@
 import 'package:bjs/repositories/api_client.dart';
+import 'package:bjs/screens/classes_screen.dart';
 import 'package:bjs/states/auth_notifier.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
+  static const String routeName = "/login";
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -42,6 +45,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
 
+    var authNotifier = Provider.of<AuthNotifier>(context);
+
     _urlFieldKey.currentState?.validate();
 
     var _sendFocusNode = FocusNode();
@@ -56,6 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
           prefixText: "http://",
           suffixText: "/api/v1",
         ),
+        initialValue: authNotifier.url ?? "",
         onSaved: (value) => _url = value,
         onFieldSubmitted: (value) async => _validateUrl(context),
         textInputAction: TextInputAction.send,
@@ -164,6 +170,10 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isInAsyncCall = false;
       });
+      
+      if (informationAreValid) {
+        await Navigator.of(context).pushReplacementNamed(ClassesScreen.routeName);
+      }
 
     }
   }

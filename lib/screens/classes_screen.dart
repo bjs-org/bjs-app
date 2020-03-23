@@ -9,15 +9,30 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class ClassesScreen extends StatefulWidget {
+  static const String routeName = "/classes";
+
   @override
   _ClassesScreenState createState() => _ClassesScreenState();
 }
 
 class _ClassesScreenState extends State<ClassesScreen> {
+
+  ClassesNotifier _classesNotifier;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ClassesView(),
+      body: ChangeNotifierProvider.value(
+          value: _classesNotifier,
+          child: ClassesView()
+      ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    var client = Provider.of<BjsApiClient>(context, listen: false);
+    _classesNotifier = ClassesNotifier(client);
   }
 }

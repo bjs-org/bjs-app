@@ -1,5 +1,6 @@
 import 'package:bjs/models/models.dart';
 import 'package:bjs/repositories/api_client.dart';
+import 'package:bjs/screens/login_screen.dart';
 import 'package:bjs/screens/students_screen.dart';
 import 'package:bjs/states/states.dart';
 import 'package:bjs/widgets/helper.dart';
@@ -33,17 +34,29 @@ class ClassesView extends StatelessWidget {
   }
 
   Future<void> _updateClasses(BuildContext context) async =>
-      await Provider.of<ClassesNotifier>(context, listen: false)
-          .updateClasses();
+      await Provider.of<ClassesNotifier>(context, listen: false).updateClasses();
 }
 
 class ClassesSliverAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var auth = Provider.of<AuthNotifier>(context);
     return GenericSliverAppBar(
       title: Text("Alle Klassen"),
+      leading: IconButton(
+        icon: Icon(Icons.power_settings_new),
+        tooltip: "Logout",
+        onPressed: () async {
+          auth.logout();
+          await Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+        },
+      ),
       actions: <Widget>[
-        IconButton(icon: Icon(Icons.add), onPressed: () async => await _addClassDialog(context),)
+        if (auth.admin)
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () async => await _addClassDialog(context),
+          )
       ],
     );
   }
@@ -63,7 +76,7 @@ class ClassesSliverList extends StatelessWidget {
 
   ClassesSliverList(this.classes);
 
-  Widget _buildSchoolClass(SchoolClass schoolClass, BuildContext context) {
+  Widget _buildSchoolClass(SchoolClass schoolClass, BuildContext context, bool isAdmin) {
     return Card(
       child: ListTile(
         title: Text(
@@ -72,17 +85,20 @@ class ClassesSliverList extends StatelessWidget {
         ),
         subtitle: Text(schoolClass.teacherName ?? ""),
         onTap: () async => await _showStudents(context, schoolClass),
-        onLongPress: () async =>
-            await _showClassInformation(context, schoolClass),
+        onLongPress: isAdmin
+            ? () async => await _showClassInformation(context, schoolClass)
+            : null,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    var isAdmin = Provider.of<AuthNotifier>(context).admin;
+
     return SliverList(
         delegate: SliverChildListDelegate(classes
-            .map((schoolClass) => _buildSchoolClass(schoolClass, context))
+            .map((schoolClass) => _buildSchoolClass(schoolClass, context, isAdmin))
             .toList()));
   }
 

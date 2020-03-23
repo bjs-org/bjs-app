@@ -8,30 +8,42 @@ import 'package:http/http.dart' as http;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  var client = http.Client();
-  final AuthNotifier authNotifier = AuthNotifier(
-    basicClient: client,
-  );
-  final BjsApiClient apiClient = BjsApiClient(
-    basicClient: client,
-    authNotifier: authNotifier,
-  );
+Future<void> main() async {
+  await initializeDateFormatting("de_DE", null);
 
-  initializeDateFormatting("de_DE", null).then(
-    (value) => runApp(
-      App(apiClient: apiClient, authNotifier: authNotifier),
-    ),
+  runApp(
+    App(),
   );
 }
 
-class App extends StatelessWidget {
-  final BjsApiClient apiClient;
-  final AuthNotifier authNotifier;
+class App extends StatefulWidget {
+  App({Key key}) : super(key: key);
 
-  App({Key key, @required this.apiClient, @required this.authNotifier})
-      : assert(apiClient != null),
-        super(key: key);
+  @override
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  AuthNotifier authNotifier;
+  BjsApiClient apiClient;
+
+  Future<bool> _loggedIn;
+
+  @override
+  void initState() {
+    super.initState();
+    final client = http.Client();
+
+    authNotifier = AuthNotifier(
+      basicClient: client,
+    );
+    _loggedIn = authNotifier.loginFromSharePrefs();
+
+    apiClient = BjsApiClient(
+      basicClient: client,
+      authNotifier: authNotifier,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +57,33 @@ class App extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
               textTheme: ButtonTextTheme.primary),
         ),
-        home: Consumer<AuthNotifier>(
-          builder: (BuildContext context, AuthNotifier value, Widget child) {
-            if (!value.loggedIn) {
-              return LoginScreen();
-            } else {
-              return ClassesScreen();
+        home: FutureBuilder<bool>(
+          future: _loggedIn,
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Scaffold(
+                  body: Center(
+                    child: const CircularProgressIndicator(),
+                  ),
+                );
+              default:
+                if (snapshot.hasError) {
+                  return Scaffold(
+                    body: Center(
+                      child: Text("Error"),
+                    ),
+                  );
+                } else {
+                  return snapshot.data ? ClassesScreen() : LoginScreen();
+                }
             }
           },
         ),
         routes: {
           StudentsScreen.routeName: (_) => StudentsScreen(),
+          ClassesScreen.routeName: (_) => ClassesScreen(),
+          LoginScreen.routeName: (_) => LoginScreen()
         },
       ),
       providers: [
@@ -65,12 +93,6 @@ class App extends StatelessWidget {
         ChangeNotifierProvider<AuthNotifier>.value(
           value: authNotifier,
         ),
-        ChangeNotifierProvider<StudentsNotifier>(
-          create: (_) => StudentsNotifier(apiClient),
-        ),
-        ChangeNotifierProvider<ClassesNotifier>(
-          create: (_) => ClassesNotifier(apiClient),
-        )
       ],
     );
   }
